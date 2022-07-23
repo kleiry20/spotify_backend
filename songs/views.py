@@ -4,28 +4,28 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from .models import Artist
-from .serializers import ArtistSerializer
+from .models import Song
+from .serializers import SongSerializer
 
 @api_view(['GET'])
-def ArtistOverview(request):
+def SongOverview(request):
 	api_urls = {
-		'all_artists': '/',
+		'all_songs': '/',
 		'Search by Category': '/?category=category_name',
 		'Search by Subcategory': '/?subcategory=category_name',
 		'Add': '/create',
 		'Update': '/update/pk',
-		'Delete': '/artist/pk/delete'
+		'Delete': '/song/pk/delete'
 	}
 
 	return Response(api_urls)
   
 @api_view(['POST'])
 def add_items(request):
-    item = ArtistSerializer(data=request.data)
+    item = SongSerializer(data=request.data)
   
     # validating for already existing data
-    if Artist.objects.filter(**request.data).exists():
+    if Song.objects.filter(**request.data).exists():
         raise serializers.ValidationError('This data already exists')
   
     if item.is_valid():
@@ -40,13 +40,13 @@ def view_items(request):
     
     # checking for the parameters from the URL
     if request.query_params:
-        items = Artist.objects.filter(**request.query_param.dict())
+        items = Song.objects.filter(**request.query_param.dict())
     else:
-        items = Artist.objects.all()
+        items = Song.objects.all()
   
     # if there is something in items else raise error
     if items:
-        serializer = ArtistSerializer(items, many=True)
+        serializer = SongSerializer(items, many=True)
         return Response(serializer.data)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -54,8 +54,8 @@ def view_items(request):
 
 @api_view(['PUT'])
 def update_items(request, pk):
-    item = Artist.objects.get(pk=pk)
-    data = ArtistSerializer(instance=item, data=request.data)
+    item = Song.objects.get(pk=pk)
+    data = SongSerializer(instance=item, data=request.data)
   
     if data.is_valid():
         data.save()
@@ -65,6 +65,6 @@ def update_items(request, pk):
 
 @api_view(['DELETE'])
 def delete_items(request, pk):
-    item = get_object_or_404(Artist, pk=pk)
+    item = get_object_or_404(Song, pk=pk)
     item.delete()
     return Response(status=status.HTTP_202_ACCEPTED)
