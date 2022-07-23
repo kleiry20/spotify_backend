@@ -1,5 +1,3 @@
-from django.db.models import fields
-from matplotlib import artist
 from rest_framework import serializers
 
 from artists.models import Artist

@@ -22,4 +22,5 @@ urlpatterns = [
     path('artists/', include('artists.urls')),
     path('songs/', include('songs.urls')),
     path('users/', include('app_users.urls')),
+    path('ratings/', include('ratings.urls')),
 ]

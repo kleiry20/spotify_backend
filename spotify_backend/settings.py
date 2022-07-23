@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'artists',
     'songs',
     'app_users',
+    'ratings',
 ]
 
 MIDDLEWARE = [
