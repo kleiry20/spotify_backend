@@ -26,10 +26,12 @@ def add_items(request):
   
     # validating for already existing data
     if AppUser.objects.filter(**request.data).exists():
-        raise serializers.ValidationError('This data already exists')
+        item = AppUserSerializer(AppUser.objects.filter(**request.data).first())
+        return Response(item.data)
   
     if item.is_valid():
         item.save()
+        item = AppUserSerializer(AppUser.objects.filter(**request.data).first())
         return Response(item.data)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)

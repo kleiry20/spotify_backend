@@ -27,9 +27,10 @@ def add_items(request):
     # validating for already existing data
     if Rating.objects.filter(**request.data).exists():
         raise serializers.ValidationError('This data already exists')
-    print(item)
     if item.is_valid():
         item.save()
+        rating = Rating.objects.get(song=item.data['song'], app_user=item.data['app_user']) 
+        rating.update_rating()
         return Response(item.data)
     else:
         print(item.errors)
@@ -52,6 +53,18 @@ def view_items(request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['GET'])
+def get_item(request, user_id, song_id):
+    item = Rating.objects.get(app_user_id=user_id, song_id=song_id)
+    data = RatingSerializer(instance=item, data=request.data)
+  
+    # if there is something in items else raise error
+    if item:
+        serializer = RatingSerializer(item)
+        return Response(serializer.data)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 @api_view(['PUT'])
 def update_items(request, pk):
@@ -60,6 +73,8 @@ def update_items(request, pk):
   
     if data.is_valid():
         data.save()
+        rating = Rating.objects.get(song=item.song.id, app_user=item.app_user.id) 
+        rating.update_rating()
         return Response(data.data)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)

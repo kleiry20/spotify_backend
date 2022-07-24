@@ -8,6 +8,6 @@ class Song(models.Model):
     date_of_release = models.DateTimeField(auto_now_add=True)
     artist = models.ForeignKey(Artist, null=True, blank=True, on_delete=models.SET_NULL)
     avg_rating = models.FloatField(max_length=255)
-  
+
     def __str__(self) -> str:
         return self.name
