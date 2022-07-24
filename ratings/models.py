@@ -18,6 +18,14 @@ class Rating(models.Model):
         song.avg_rating = total_ratings['rating__sum'] // count
         print(song, total_ratings['rating__sum'] // count)
         song.save()
+
+    def update_artist_rating(self):
+        artist = self.song.artist
+        ratings = Song.objects.filter(artist=artist.id)
+        total_ratings = ratings.aggregate(Sum('avg_rating'))
+        count = ratings.count()
+        artist.avg_rating = total_ratings['avg_rating__sum'] // count
+        artist.save()
   
     def __str__(self) -> str:
         return str(self.id)

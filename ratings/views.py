@@ -31,6 +31,7 @@ def add_items(request):
         item.save()
         rating = Rating.objects.get(song=item.data['song'], app_user=item.data['app_user']) 
         rating.update_rating()
+        rating.update_artist_rating()
         return Response(item.data)
     else:
         print(item.errors)
@@ -75,6 +76,7 @@ def update_items(request, pk):
         data.save()
         rating = Rating.objects.get(song=item.song.id, app_user=item.app_user.id) 
         rating.update_rating()
+        rating.update_artist_rating()
         return Response(data.data)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)

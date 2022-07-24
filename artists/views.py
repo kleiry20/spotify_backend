@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-
+from django.db.models import Sum
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -40,9 +40,9 @@ def view_items(request):
     
     # checking for the parameters from the URL
     if request.query_params:
-        items = Artist.objects.filter(**request.query_param.dict())
+        items = Artist.objects.filter(**request.query_param.dict()).annotate(rating_count=Sum('avg_rating')).order_by('-rating_count')[:10]
     else:
-        items = Artist.objects.all()
+        items = Artist.objects.all().annotate(rating_count=Sum('avg_rating')).order_by('-rating_count')[:10]
   
     # if there is something in items else raise error
     if items:

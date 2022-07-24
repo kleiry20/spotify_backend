@@ -1,11 +1,15 @@
+from audioop import avg
 from django.shortcuts import get_object_or_404
-
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.db.models import Sum
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from .models import Song
 from .serializers import SongSerializer
+
+parser_classes = (MultiPartParser, FormParser)
 
 @api_view(['GET'])
 def SongOverview(request):
@@ -22,10 +26,20 @@ def SongOverview(request):
   
 @api_view(['POST'])
 def add_items(request):
-    item = SongSerializer(data=request.data)
+    files = request.FILES
+    post_data = request.POST
+    data = {
+        'name': post_data.get("name"), 
+        'date_of_release': post_data.get("date_of_release"),
+        'artist': post_data.get("artist"),
+        'avg_rating': post_data.get("avg_rating"),
+        'image': files.get("image"),
+    }
+
+    item = SongSerializer(data=data)
   
     # validating for already existing data
-    if Song.objects.filter(**request.data).exists():
+    if Song.objects.filter(**data).exists():
         raise serializers.ValidationError('This data already exists')
   
     if item.is_valid():
@@ -40,9 +54,9 @@ def view_items(request):
     
     # checking for the parameters from the URL
     if request.query_params:
-        items = Song.objects.filter(**request.query_param.dict())
+        items = Song.objects.filter(**request.query_param.dict()).annotate(rating_count=Sum('avg_rating')).order_by('-rating_count')[:10]
     else:
-        items = Song.objects.all()
+        items = Song.objects.all().annotate(rating_count=Sum('avg_rating')).order_by('-rating_count')[:10]
   
     # if there is something in items else raise error
     if items:
