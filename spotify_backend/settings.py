@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'delta-x-spotify.herokuapp.com',
+    '127.0.0.1',
+    'https://spotify-app-wine-chi.vercel.app/',
 ]
 
 
