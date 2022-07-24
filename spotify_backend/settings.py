@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-qo5+gjz6520kqpeh@xlr7@!zs-3tall&kb8t(!jnvo*fa(v9t$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'delta-x-spotify.herokuapp.com',
+]
 
 
 # Application definition
